@@ -24,11 +24,13 @@ router.get("/test", (req, res) => {
 // @desc    Registe User
 // @access  public
 router.post("/register", async (req, res) => {
+  // get errors object from function imported
   const { errors, isValid } = validateRegisterInput(req.body);
   if (!isValid) {
     return res.status(400).json(errors);
   }
   try {
+    // check for user same email
     const user = await User.findOne({ email: req.body.email });
     if (user) {
       errors.email = "Email already exists";
@@ -65,6 +67,7 @@ router.post("/register", async (req, res) => {
 // @desc    Login User / Returning jwt token
 // @access  public
 router.post("/login", async (req, res) => {
+  // get errors object from function imported
   const { errors, isValid } = validateLoginInput(req.body);
   if (!isValid) {
     return res.status(400).json(errors);
