@@ -2,15 +2,16 @@
 // rcc to get boiler plate code of class bases components
 
 import { Component } from "react";
+import { Link } from "react-router-dom";
 
 class Navbar extends Component {
   render() {
     return (
-      <nav class="navbar navbar-expand-sm navbar-dark bg-dark mb-4">
+      <nav className="navbar navbar-expand-sm navbar-dark bg-dark mb-4">
         <div className="container">
-          <a className="navbar-brand" href="landing.html">
+          <Link className="navbar-brand" to="/">
             DevConnector
-          </a>
+          </Link>
           <button
             className="navbar-toggler"
             type="button"
@@ -23,23 +24,22 @@ class Navbar extends Component {
           <div className="collapse navbar-collapse" id="mobile-nav">
             <ul className="navbar-nav me-auto">
               <li className="nav-item">
-                <a className="nav-link" href="profiles.html">
-                  {" "}
+                <Link className="nav-link" to="/profiles">
                   Developers
-                </a>
+                </Link>
               </li>
             </ul>
 
             <ul className="navbar-nav ms-auto">
               <li className="nav-item">
-                <a className="nav-link" href="register.html">
+                <Link className="nav-link" to="/register">
                   Sign Up
-                </a>
+                </Link>
               </li>
               <li className="nav-item">
-                <a className="nav-link" href="login.html">
+                <Link className="nav-link" to="/login">
                   Login
-                </a>
+                </Link>
               </li>
             </ul>
           </div>

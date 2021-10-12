@@ -20,7 +20,7 @@ router.get("/test", (req, res) => {
   });
 });
 
-// @route   GET api/users/register
+// @route   POST api/users/register
 // @desc    Registe User
 // @access  public
 router.post("/register", async (req, res) => {
