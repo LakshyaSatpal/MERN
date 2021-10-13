@@ -1,5 +1,8 @@
 import React, { Component } from "react";
-import axios from "axios";
+import { connect } from "react-redux";
+import PropTypes from "prop-types";
+import { registerUser } from "../../actions/authActions";
+import { withRouter } from "react-router-dom";
 
 class Register extends Component {
   constructor() {
@@ -12,10 +15,22 @@ class Register extends Component {
       errors: {},
     };
   }
+  componentDidMount() {
+    if (this.props.auth.isAuthenticated) {
+      this.props.history.push("/dashboard");
+    }
+  }
   onChange(e) {
     this.setState({ [e.target.name]: e.target.value });
 
     // The use of [] gives an excellent way to use actual value of variable as key/property while creating JavaScript objects.
+  }
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.errors) {
+      this.setState({
+        errors: nextProps.errors,
+      });
+    }
   }
   async onSubmit(e) {
     e.preventDefault();
@@ -26,19 +41,10 @@ class Register extends Component {
       password2: this.state.password2,
     };
 
-    try {
-      const result = await axios.post("/api/users/register", newUser);
-      // result will be a promise
-      // second parameter is body of request in POST
-      console.log(result.data);
-    } catch (err) {
-      // catch block will execute depending on the status code coming from backend
-      // error.response.data to get json error data from backend
-      this.setState({ errors: err.response.data });
-      console.log(err.response.data);
-    }
+    this.props.registerUser(newUser, this.props.history);
   }
   render() {
+    const { errors } = this.state;
     return (
       <div className="register">
         <div className="container">
@@ -53,34 +59,30 @@ class Register extends Component {
                   <input
                     type="text"
                     className={`form-control form-control-lg mt-3 ${
-                      this.state.errors.name ? "is-invalid" : ""
+                      errors.name ? "is-invalid" : ""
                     }`}
                     placeholder="Name"
                     name="name"
                     value={this.state.name}
                     onChange={this.onChange.bind(this)}
                   />
-                  {this.state.errors.name && (
-                    <div className="invalid-feedback">
-                      {this.state.errors.name}
-                    </div>
+                  {errors.name && (
+                    <div className="invalid-feedback">{errors.name}</div>
                   )}
                 </div>
                 <div className="form-group">
                   <input
                     type="email"
                     className={`form-control form-control-lg mt-3 ${
-                      this.state.errors.email ? "is-invalid" : ""
+                      errors.email ? "is-invalid" : ""
                     }`}
                     placeholder="Email Address"
                     name="email"
                     value={this.state.email}
                     onChange={this.onChange.bind(this)}
                   />
-                  {this.state.errors.email && (
-                    <div className="invalid-feedback">
-                      {this.state.errors.email}
-                    </div>
+                  {errors.email && (
+                    <div className="invalid-feedback">{errors.email}</div>
                   )}
                   <small className="form-text text-muted">
                     This site uses Gravatar so if you want a profile image, use
@@ -91,34 +93,30 @@ class Register extends Component {
                   <input
                     type="password"
                     className={`form-control form-control-lg mt-3 ${
-                      this.state.errors.password ? "is-invalid" : ""
+                      errors.password ? "is-invalid" : ""
                     }`}
                     placeholder="Password"
                     name="password"
                     value={this.state.password}
                     onChange={this.onChange.bind(this)}
                   />
-                  {this.state.errors.password && (
-                    <div className="invalid-feedback">
-                      {this.state.errors.password}
-                    </div>
+                  {errors.password && (
+                    <div className="invalid-feedback">{errors.password}</div>
                   )}
                 </div>
                 <div className="form-group">
                   <input
                     type="password"
                     className={`form-control form-control-lg mt-3 ${
-                      this.state.errors.password2 ? "is-invalid" : ""
+                      errors.password2 ? "is-invalid" : ""
                     }`}
                     placeholder="Confirm Password"
                     name="password2"
                     value={this.state.password2}
                     onChange={this.onChange.bind(this)}
                   />
-                  {this.state.errors.password2 && (
-                    <div className="invalid-feedback">
-                      {this.state.errors.password2}
-                    </div>
+                  {errors.password2 && (
+                    <div className="invalid-feedback">{errors.password2}</div>
                   )}
                 </div>
                 <input type="submit" className="btn btn-info btn-block mt-4" />
@@ -131,4 +129,20 @@ class Register extends Component {
   }
 }
 
-export default Register;
+Register.propTypes = {
+  registerUser: PropTypes.func.isRequired,
+  auth: PropTypes.object.isRequired,
+  errors: PropTypes.object.isRequired,
+};
+
+const mapStateToProps = (state) => ({
+  auth: state.auth,
+  errors: state.errors,
+}); // to take redux state into props
+
+// function mapStateToProps (state) {
+//   return {
+//     auth: state.auth,
+//   }
+// }
+export default connect(mapStateToProps, { registerUser })(withRouter(Register)); // subscribe this component to store state
